@@ -7,9 +7,9 @@ import pytest
 import pydantic
 from pydantic import Field
 
-from vern_sdk._utils import PropertyInfo
-from vern_sdk._compat import PYDANTIC_V2, parse_obj, model_dump, model_json
-from vern_sdk._models import BaseModel, construct_type
+from vern._utils import PropertyInfo
+from vern._compat import PYDANTIC_V2, parse_obj, model_dump, model_json
+from vern._models import BaseModel, construct_type
 
 
 class BasicModel(BaseModel):

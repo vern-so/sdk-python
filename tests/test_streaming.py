@@ -5,8 +5,8 @@ from typing import Iterator, AsyncIterator
 import httpx
 import pytest
 
-from vern_sdk import Vern, AsyncVern
-from vern_sdk._streaming import Stream, AsyncStream, ServerSentEvent
+from vern import Vern, AsyncVern
+from vern._streaming import Stream, AsyncStream, ServerSentEvent
 
 
 @pytest.mark.asyncio
