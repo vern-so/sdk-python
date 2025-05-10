@@ -79,7 +79,7 @@ class Vern(SyncAPIClient):
         if base_url is None:
             base_url = os.environ.get("VERN_BASE_URL")
         if base_url is None:
-            base_url = f"https://app.getvern.com/api/v1"
+            base_url = f"https://vern.so/api/v1"
 
         super().__init__(
             version=__version__,
@@ -247,7 +247,7 @@ class AsyncVern(AsyncAPIClient):
         if base_url is None:
             base_url = os.environ.get("VERN_BASE_URL")
         if base_url is None:
-            base_url = f"https://app.getvern.com/api/v1"
+            base_url = f"https://vern.so/api/v1"
 
         super().__init__(
             version=__version__,

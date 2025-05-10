@@ -21,19 +21,14 @@ import pytest
 from respx import MockRouter
 from pydantic import ValidationError
 
-from vern_sdk import Vern, AsyncVern, APIResponseValidationError
-from vern_sdk._types import Omit
-from vern_sdk._utils import maybe_transform
-from vern_sdk._models import BaseModel, FinalRequestOptions
-from vern_sdk._constants import RAW_RESPONSE_HEADER
-from vern_sdk._exceptions import VernError, APIStatusError, APITimeoutError, APIResponseValidationError
-from vern_sdk._base_client import (
-    DEFAULT_TIMEOUT,
-    HTTPX_DEFAULT_TIMEOUT,
-    BaseClient,
-    make_request_options,
-)
-from vern_sdk.types.run_create_params import RunCreateParams
+from vern import Vern, AsyncVern, APIResponseValidationError
+from vern._types import Omit
+from vern._utils import maybe_transform
+from vern._models import BaseModel, FinalRequestOptions
+from vern._constants import RAW_RESPONSE_HEADER
+from vern._exceptions import VernError, APIStatusError, APITimeoutError, APIResponseValidationError
+from vern._base_client import DEFAULT_TIMEOUT, HTTPX_DEFAULT_TIMEOUT, BaseClient, make_request_options
+from vern.types.run_create_params import RunCreateParams
 
 from .utils import update_env
 
@@ -232,10 +227,10 @@ class TestVern:
                         # to_raw_response_wrapper leaks through the @functools.wraps() decorator.
                         #
                         # removing the decorator fixes the leak for reasons we don't understand.
-                        "vern_sdk/_legacy_response.py",
-                        "vern_sdk/_response.py",
+                        "vern/_legacy_response.py",
+                        "vern/_response.py",
                         # pydantic.BaseModel.model_dump || pydantic.BaseModel.dict leak memory for some reason.
-                        "vern_sdk/_compat.py",
+                        "vern/_compat.py",
                         # Standard library leaks we don't care about.
                         "/logging/__init__.py",
                     ]
@@ -703,7 +698,7 @@ class TestVern:
         calculated = client._calculate_retry_timeout(remaining_retries, options, headers)
         assert calculated == pytest.approx(timeout, 0.5 * 0.875)  # pyright: ignore[reportUnknownMemberType]
 
-    @mock.patch("vern_sdk._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("vern._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     def test_retrying_timeout_errors_doesnt_leak(self, respx_mock: MockRouter) -> None:
         respx_mock.post("/runs").mock(side_effect=httpx.TimeoutException("Test timeout error"))
@@ -718,7 +713,7 @@ class TestVern:
 
         assert _get_open_connections(self.client) == 0
 
-    @mock.patch("vern_sdk._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("vern._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     def test_retrying_status_errors_doesnt_leak(self, respx_mock: MockRouter) -> None:
         respx_mock.post("/runs").mock(return_value=httpx.Response(500))
@@ -734,7 +729,7 @@ class TestVern:
         assert _get_open_connections(self.client) == 0
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
-    @mock.patch("vern_sdk._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("vern._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     @pytest.mark.parametrize("failure_mode", ["status", "exception"])
     def test_retries_taken(
@@ -765,7 +760,7 @@ class TestVern:
         assert int(response.http_request.headers.get("x-stainless-retry-count")) == failures_before_success
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
-    @mock.patch("vern_sdk._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("vern._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     def test_omit_retry_count_header(self, client: Vern, failures_before_success: int, respx_mock: MockRouter) -> None:
         client = client.with_options(max_retries=4)
@@ -788,7 +783,7 @@ class TestVern:
         assert len(response.http_request.headers.get_list("x-stainless-retry-count")) == 0
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
-    @mock.patch("vern_sdk._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("vern._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     def test_overwrite_retry_count_header(
         self, client: Vern, failures_before_success: int, respx_mock: MockRouter
@@ -988,10 +983,10 @@ class TestAsyncVern:
                         # to_raw_response_wrapper leaks through the @functools.wraps() decorator.
                         #
                         # removing the decorator fixes the leak for reasons we don't understand.
-                        "vern_sdk/_legacy_response.py",
-                        "vern_sdk/_response.py",
+                        "vern/_legacy_response.py",
+                        "vern/_response.py",
                         # pydantic.BaseModel.model_dump || pydantic.BaseModel.dict leak memory for some reason.
-                        "vern_sdk/_compat.py",
+                        "vern/_compat.py",
                         # Standard library leaks we don't care about.
                         "/logging/__init__.py",
                     ]
@@ -1471,7 +1466,7 @@ class TestAsyncVern:
         calculated = client._calculate_retry_timeout(remaining_retries, options, headers)
         assert calculated == pytest.approx(timeout, 0.5 * 0.875)  # pyright: ignore[reportUnknownMemberType]
 
-    @mock.patch("vern_sdk._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("vern._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     async def test_retrying_timeout_errors_doesnt_leak(self, respx_mock: MockRouter) -> None:
         respx_mock.post("/runs").mock(side_effect=httpx.TimeoutException("Test timeout error"))
@@ -1486,7 +1481,7 @@ class TestAsyncVern:
 
         assert _get_open_connections(self.client) == 0
 
-    @mock.patch("vern_sdk._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("vern._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     async def test_retrying_status_errors_doesnt_leak(self, respx_mock: MockRouter) -> None:
         respx_mock.post("/runs").mock(return_value=httpx.Response(500))
@@ -1502,7 +1497,7 @@ class TestAsyncVern:
         assert _get_open_connections(self.client) == 0
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
-    @mock.patch("vern_sdk._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("vern._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     @pytest.mark.asyncio
     @pytest.mark.parametrize("failure_mode", ["status", "exception"])
@@ -1534,7 +1529,7 @@ class TestAsyncVern:
         assert int(response.http_request.headers.get("x-stainless-retry-count")) == failures_before_success
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
-    @mock.patch("vern_sdk._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("vern._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     @pytest.mark.asyncio
     async def test_omit_retry_count_header(
@@ -1560,7 +1555,7 @@ class TestAsyncVern:
         assert len(response.http_request.headers.get_list("x-stainless-retry-count")) == 0
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
-    @mock.patch("vern_sdk._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
+    @mock.patch("vern._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     @pytest.mark.asyncio
     async def test_overwrite_retry_count_header(
@@ -1596,8 +1591,8 @@ class TestAsyncVern:
         import nest_asyncio
         import threading
 
-        from vern_sdk._utils import asyncify
-        from vern_sdk._base_client import get_platform
+        from vern._utils import asyncify
+        from vern._base_client import get_platform
 
         async def test_main() -> None:
             result = await asyncify(get_platform)()

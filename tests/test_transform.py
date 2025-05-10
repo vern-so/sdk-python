@@ -8,15 +8,15 @@ from typing_extensions import Required, Annotated, TypedDict
 
 import pytest
 
-from vern_sdk._types import NOT_GIVEN, Base64FileInput
-from vern_sdk._utils import (
+from vern._types import NOT_GIVEN, Base64FileInput
+from vern._utils import (
     PropertyInfo,
     transform as _transform,
     parse_datetime,
     async_transform as _async_transform,
 )
-from vern_sdk._compat import PYDANTIC_V2
-from vern_sdk._models import BaseModel
+from vern._compat import PYDANTIC_V2
+from vern._models import BaseModel
 
 _T = TypeVar("_T")
 

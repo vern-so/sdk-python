@@ -7,9 +7,9 @@ from typing import Any, cast
 
 import pytest
 
-from vern_sdk import Vern, AsyncVern
+from vern import Vern, AsyncVern
+from vern.types import RunCreateResponse, RunRetrieveResponse
 from tests.utils import assert_matches_type
-from vern_sdk.types import RunCreateResponse, RunRetrieveResponse
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 
