@@ -34,6 +34,7 @@ class TestRuns:
                 "prompt": "bar",
                 "text": "bar",
             },
+            profile_id="profileId",
             url="https://example.com",
         )
         assert_matches_type(RunCreateResponse, run, path=["response"])
@@ -127,6 +128,7 @@ class TestAsyncRuns:
                 "prompt": "bar",
                 "text": "bar",
             },
+            profile_id="profileId",
             url="https://example.com",
         )
         assert_matches_type(RunCreateResponse, run, path=["response"])
