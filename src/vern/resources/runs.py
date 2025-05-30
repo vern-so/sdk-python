@@ -49,6 +49,7 @@ class RunsResource(SyncAPIResource):
         *,
         task_id: str,
         inputs: Dict[str, object] | NotGiven = NOT_GIVEN,
+        profile_id: str | NotGiven = NOT_GIVEN,
         url: str | NotGiven = NOT_GIVEN,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -64,6 +65,8 @@ class RunsResource(SyncAPIResource):
           task_id: The ID of the task to execute
 
           inputs: The inputs required for the task
+
+          profile_id: Optional user-specified UID for a profile linked via magic link
 
           url: An optional URL to be processed by the task
 
@@ -81,6 +84,7 @@ class RunsResource(SyncAPIResource):
                 {
                     "task_id": task_id,
                     "inputs": inputs,
+                    "profile_id": profile_id,
                     "url": url,
                 },
                 run_create_params.RunCreateParams,
@@ -150,6 +154,7 @@ class AsyncRunsResource(AsyncAPIResource):
         *,
         task_id: str,
         inputs: Dict[str, object] | NotGiven = NOT_GIVEN,
+        profile_id: str | NotGiven = NOT_GIVEN,
         url: str | NotGiven = NOT_GIVEN,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -165,6 +170,8 @@ class AsyncRunsResource(AsyncAPIResource):
           task_id: The ID of the task to execute
 
           inputs: The inputs required for the task
+
+          profile_id: Optional user-specified UID for a profile linked via magic link
 
           url: An optional URL to be processed by the task
 
@@ -182,6 +189,7 @@ class AsyncRunsResource(AsyncAPIResource):
                 {
                     "task_id": task_id,
                     "inputs": inputs,
+                    "profile_id": profile_id,
                     "url": url,
                 },
                 run_create_params.RunCreateParams,
