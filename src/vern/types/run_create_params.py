@@ -17,5 +17,8 @@ class RunCreateParams(TypedDict, total=False):
     inputs: Dict[str, object]
     """The inputs required for the task"""
 
+    profile_id: Annotated[str, PropertyInfo(alias="profileId")]
+    """Optional user-specified UID for a profile linked via magic link"""
+
     url: str
     """An optional URL to be processed by the task"""
