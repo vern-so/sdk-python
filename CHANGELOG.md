@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.0.0 (2025-06-03)
+
+Full Changelog: [v0.1.0-alpha.2...v1.0.0](https://github.com/vern-so/sdk-python/compare/v0.1.0-alpha.2...v1.0.0)
+
+### Features
+
+* **client:** add follow_redirects request option ([4fa0134](https://github.com/vern-so/sdk-python/commit/4fa01341b738dde368833d51908fafaf88197577))
+
+
+### Chores
+
+* **docs:** remove reference to rye shell ([6bde5fd](https://github.com/vern-so/sdk-python/commit/6bde5fd40be4671cc221ee0a98471f017060d769))
+
 ## 0.1.0-alpha.2 (2025-05-30)
 
 Full Changelog: [v0.1.0-alpha.1...v0.1.0-alpha.2](https://github.com/vern-so/sdk-python/compare/v0.1.0-alpha.1...v0.1.0-alpha.2)
