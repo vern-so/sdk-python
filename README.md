@@ -1,6 +1,6 @@
 # Vern Python API library
 
-[![PyPI version](https://img.shields.io/pypi/v/vern-so.svg)](https://pypi.org/project/vern-so/)
+[![PyPI version](<https://img.shields.io/pypi/v/vern-so.svg?label=pypi%20(stable)>)](https://pypi.org/project/vern-so/)
 
 The Vern Python library provides convenient access to the Vern REST API from any Python 3.8+
 application. The library includes type definitions for all request params and response fields,
