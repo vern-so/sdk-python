@@ -1,5 +1,39 @@
 # Changelog
 
+## 1.0.0 (2025-06-30)
+
+Full Changelog: [v0.1.0-alpha.2...v1.0.0](https://github.com/vern-so/sdk-python/compare/v0.1.0-alpha.2...v1.0.0)
+
+### Features
+
+* **client:** add follow_redirects request option ([4fa0134](https://github.com/vern-so/sdk-python/commit/4fa01341b738dde368833d51908fafaf88197577))
+* **client:** add support for aiohttp ([f3deadf](https://github.com/vern-so/sdk-python/commit/f3deadfd90a88d23ee70f1f6f038226598709756))
+
+
+### Bug Fixes
+
+* **ci:** correct conditional ([7b58f42](https://github.com/vern-so/sdk-python/commit/7b58f42979b94ea99b346bdec859d06dd98fc0d7))
+* **ci:** release-doctor — report correct token name ([6bdf846](https://github.com/vern-so/sdk-python/commit/6bdf846af84f50b66a90da5baf95a2bbcddaf385))
+* **client:** correctly parse binary response | stream ([1bc7383](https://github.com/vern-so/sdk-python/commit/1bc738315ba972269feef72fa171801b89e14b25))
+* **tests:** fix: tests which call HTTP endpoints directly with the example parameters ([74105df](https://github.com/vern-so/sdk-python/commit/74105df107a3b6032d70fead1199a13dabd123b4))
+
+
+### Chores
+
+* **ci:** enable for pull requests ([18902ec](https://github.com/vern-so/sdk-python/commit/18902ecf807ed5aeae5ea707032723d84d783bbd))
+* **ci:** only run for pushes and fork pull requests ([c7be3aa](https://github.com/vern-so/sdk-python/commit/c7be3aa54941b3972e75349e815d474f197e41ad))
+* **docs:** remove reference to rye shell ([6bde5fd](https://github.com/vern-so/sdk-python/commit/6bde5fd40be4671cc221ee0a98471f017060d769))
+* **internal:** update conftest.py ([1f45887](https://github.com/vern-so/sdk-python/commit/1f458871a255f3ed75f3ce2533174e5135fab87d))
+* **readme:** update badges ([8c3af97](https://github.com/vern-so/sdk-python/commit/8c3af978f30c4b380eafdc7deb1f2c3e34b0b00c))
+* **tests:** add tests for httpx client instantiation & proxies ([00bb21f](https://github.com/vern-so/sdk-python/commit/00bb21f7c86d3bfe528f851c5e3ae233d1f4f740))
+* **tests:** run tests in parallel ([cd215da](https://github.com/vern-so/sdk-python/commit/cd215da7931d3e31f2cb0965dc1e8c4f752d90d1))
+* **tests:** skip some failing tests on the latest python versions ([b2cc0d8](https://github.com/vern-so/sdk-python/commit/b2cc0d8959eb72fbac05632154bba274d3f141ba))
+
+
+### Documentation
+
+* **client:** fix httpx.Timeout documentation reference ([759774e](https://github.com/vern-so/sdk-python/commit/759774e367c93ae26168b98411ed58dc0dcb3db9))
+
 ## 0.1.0-alpha.2 (2025-05-30)
 
 Full Changelog: [v0.1.0-alpha.1...v0.1.0-alpha.2](https://github.com/vern-so/sdk-python/compare/v0.1.0-alpha.1...v0.1.0-alpha.2)
