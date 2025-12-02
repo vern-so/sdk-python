@@ -83,6 +83,7 @@ pip install --pre vern-so[aiohttp]
 Then you can enable it by instantiating the client with `http_client=DefaultAioHttpClient()`:
 
 ```python
+import os
 import asyncio
 from vern import DefaultAioHttpClient
 from vern import AsyncVern
@@ -90,7 +91,7 @@ from vern import AsyncVern
 
 async def main() -> None:
     async with AsyncVern(
-        api_key="My API Key",
+        api_key=os.environ.get("VERN_SDK_API_KEY"),  # This is the default and can be omitted
         http_client=DefaultAioHttpClient(),
     ) as client:
         run = await client.runs.create(
