@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import os
-from typing import Any, Mapping
+from typing import TYPE_CHECKING, Any, Mapping
 from typing_extensions import Self, override
 
 import httpx
@@ -20,8 +20,8 @@ from ._types import (
     not_given,
 )
 from ._utils import is_given, get_async_library
+from ._compat import cached_property
 from ._version import __version__
-from .resources import runs
 from ._streaming import Stream as Stream, AsyncStream as AsyncStream
 from ._exceptions import VernError, APIStatusError
 from ._base_client import (
@@ -30,14 +30,14 @@ from ._base_client import (
     AsyncAPIClient,
 )
 
+if TYPE_CHECKING:
+    from .resources import runs
+    from .resources.runs import RunsResource, AsyncRunsResource
+
 __all__ = ["Timeout", "Transport", "ProxiesTypes", "RequestOptions", "Vern", "AsyncVern", "Client", "AsyncClient"]
 
 
 class Vern(SyncAPIClient):
-    runs: runs.RunsResource
-    with_raw_response: VernWithRawResponse
-    with_streaming_response: VernWithStreamedResponse
-
     # client options
     api_key: str
 
@@ -92,9 +92,19 @@ class Vern(SyncAPIClient):
             _strict_response_validation=_strict_response_validation,
         )
 
-        self.runs = runs.RunsResource(self)
-        self.with_raw_response = VernWithRawResponse(self)
-        self.with_streaming_response = VernWithStreamedResponse(self)
+    @cached_property
+    def runs(self) -> RunsResource:
+        from .resources.runs import RunsResource
+
+        return RunsResource(self)
+
+    @cached_property
+    def with_raw_response(self) -> VernWithRawResponse:
+        return VernWithRawResponse(self)
+
+    @cached_property
+    def with_streaming_response(self) -> VernWithStreamedResponse:
+        return VernWithStreamedResponse(self)
 
     @property
     @override
@@ -202,10 +212,6 @@ class Vern(SyncAPIClient):
 
 
 class AsyncVern(AsyncAPIClient):
-    runs: runs.AsyncRunsResource
-    with_raw_response: AsyncVernWithRawResponse
-    with_streaming_response: AsyncVernWithStreamedResponse
-
     # client options
     api_key: str
 
@@ -260,9 +266,19 @@ class AsyncVern(AsyncAPIClient):
             _strict_response_validation=_strict_response_validation,
         )
 
-        self.runs = runs.AsyncRunsResource(self)
-        self.with_raw_response = AsyncVernWithRawResponse(self)
-        self.with_streaming_response = AsyncVernWithStreamedResponse(self)
+    @cached_property
+    def runs(self) -> AsyncRunsResource:
+        from .resources.runs import AsyncRunsResource
+
+        return AsyncRunsResource(self)
+
+    @cached_property
+    def with_raw_response(self) -> AsyncVernWithRawResponse:
+        return AsyncVernWithRawResponse(self)
+
+    @cached_property
+    def with_streaming_response(self) -> AsyncVernWithStreamedResponse:
+        return AsyncVernWithStreamedResponse(self)
 
     @property
     @override
@@ -370,23 +386,55 @@ class AsyncVern(AsyncAPIClient):
 
 
 class VernWithRawResponse:
+    _client: Vern
+
     def __init__(self, client: Vern) -> None:
-        self.runs = runs.RunsResourceWithRawResponse(client.runs)
+        self._client = client
+
+    @cached_property
+    def runs(self) -> runs.RunsResourceWithRawResponse:
+        from .resources.runs import RunsResourceWithRawResponse
+
+        return RunsResourceWithRawResponse(self._client.runs)
 
 
 class AsyncVernWithRawResponse:
+    _client: AsyncVern
+
     def __init__(self, client: AsyncVern) -> None:
-        self.runs = runs.AsyncRunsResourceWithRawResponse(client.runs)
+        self._client = client
+
+    @cached_property
+    def runs(self) -> runs.AsyncRunsResourceWithRawResponse:
+        from .resources.runs import AsyncRunsResourceWithRawResponse
+
+        return AsyncRunsResourceWithRawResponse(self._client.runs)
 
 
 class VernWithStreamedResponse:
+    _client: Vern
+
     def __init__(self, client: Vern) -> None:
-        self.runs = runs.RunsResourceWithStreamingResponse(client.runs)
+        self._client = client
+
+    @cached_property
+    def runs(self) -> runs.RunsResourceWithStreamingResponse:
+        from .resources.runs import RunsResourceWithStreamingResponse
+
+        return RunsResourceWithStreamingResponse(self._client.runs)
 
 
 class AsyncVernWithStreamedResponse:
+    _client: AsyncVern
+
     def __init__(self, client: AsyncVern) -> None:
-        self.runs = runs.AsyncRunsResourceWithStreamingResponse(client.runs)
+        self._client = client
+
+    @cached_property
+    def runs(self) -> runs.AsyncRunsResourceWithStreamingResponse:
+        from .resources.runs import AsyncRunsResourceWithStreamingResponse
+
+        return AsyncRunsResourceWithStreamingResponse(self._client.runs)
 
 
 Client = Vern
