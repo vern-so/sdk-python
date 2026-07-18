@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import os
-from typing import Any, Union, Mapping
+from typing import TYPE_CHECKING, Any, Mapping
 from typing_extensions import Self, override
 
 import httpx
@@ -11,17 +11,21 @@ import httpx
 from . import _exceptions
 from ._qs import Querystring
 from ._types import (
-    NOT_GIVEN,
     Omit,
     Timeout,
     NotGiven,
     Transport,
     ProxiesTypes,
     RequestOptions,
+    not_given,
 )
-from ._utils import is_given, get_async_library
+from ._utils import (
+    is_given,
+    is_mapping_t,
+    get_async_library,
+)
+from ._compat import cached_property
 from ._version import __version__
-from .resources import runs
 from ._streaming import Stream as Stream, AsyncStream as AsyncStream
 from ._exceptions import VernError, APIStatusError
 from ._base_client import (
@@ -30,14 +34,14 @@ from ._base_client import (
     AsyncAPIClient,
 )
 
+if TYPE_CHECKING:
+    from .resources import runs
+    from .resources.runs import RunsResource, AsyncRunsResource
+
 __all__ = ["Timeout", "Transport", "ProxiesTypes", "RequestOptions", "Vern", "AsyncVern", "Client", "AsyncClient"]
 
 
 class Vern(SyncAPIClient):
-    runs: runs.RunsResource
-    with_raw_response: VernWithRawResponse
-    with_streaming_response: VernWithStreamedResponse
-
     # client options
     api_key: str
 
@@ -46,7 +50,7 @@ class Vern(SyncAPIClient):
         *,
         api_key: str | None = None,
         base_url: str | httpx.URL | None = None,
-        timeout: Union[float, Timeout, None, NotGiven] = NOT_GIVEN,
+        timeout: float | Timeout | None | NotGiven = not_given,
         max_retries: int = DEFAULT_MAX_RETRIES,
         default_headers: Mapping[str, str] | None = None,
         default_query: Mapping[str, object] | None = None,
@@ -81,6 +85,15 @@ class Vern(SyncAPIClient):
         if base_url is None:
             base_url = f"https://vern.so/api/v1"
 
+        custom_headers_env = os.environ.get("VERN_CUSTOM_HEADERS")
+        if custom_headers_env is not None:
+            parsed: dict[str, str] = {}
+            for line in custom_headers_env.split("\n"):
+                colon = line.find(":")
+                if colon >= 0:
+                    parsed[line[:colon].strip()] = line[colon + 1 :].strip()
+            default_headers = {**parsed, **(default_headers if is_mapping_t(default_headers) else {})}
+
         super().__init__(
             version=__version__,
             base_url=base_url,
@@ -92,9 +105,19 @@ class Vern(SyncAPIClient):
             _strict_response_validation=_strict_response_validation,
         )
 
-        self.runs = runs.RunsResource(self)
-        self.with_raw_response = VernWithRawResponse(self)
-        self.with_streaming_response = VernWithStreamedResponse(self)
+    @cached_property
+    def runs(self) -> RunsResource:
+        from .resources.runs import RunsResource
+
+        return RunsResource(self)
+
+    @cached_property
+    def with_raw_response(self) -> VernWithRawResponse:
+        return VernWithRawResponse(self)
+
+    @cached_property
+    def with_streaming_response(self) -> VernWithStreamedResponse:
+        return VernWithStreamedResponse(self)
 
     @property
     @override
@@ -121,9 +144,9 @@ class Vern(SyncAPIClient):
         *,
         api_key: str | None = None,
         base_url: str | httpx.URL | None = None,
-        timeout: float | Timeout | None | NotGiven = NOT_GIVEN,
+        timeout: float | Timeout | None | NotGiven = not_given,
         http_client: httpx.Client | None = None,
-        max_retries: int | NotGiven = NOT_GIVEN,
+        max_retries: int | NotGiven = not_given,
         default_headers: Mapping[str, str] | None = None,
         set_default_headers: Mapping[str, str] | None = None,
         default_query: Mapping[str, object] | None = None,
@@ -202,10 +225,6 @@ class Vern(SyncAPIClient):
 
 
 class AsyncVern(AsyncAPIClient):
-    runs: runs.AsyncRunsResource
-    with_raw_response: AsyncVernWithRawResponse
-    with_streaming_response: AsyncVernWithStreamedResponse
-
     # client options
     api_key: str
 
@@ -214,7 +233,7 @@ class AsyncVern(AsyncAPIClient):
         *,
         api_key: str | None = None,
         base_url: str | httpx.URL | None = None,
-        timeout: Union[float, Timeout, None, NotGiven] = NOT_GIVEN,
+        timeout: float | Timeout | None | NotGiven = not_given,
         max_retries: int = DEFAULT_MAX_RETRIES,
         default_headers: Mapping[str, str] | None = None,
         default_query: Mapping[str, object] | None = None,
@@ -249,6 +268,15 @@ class AsyncVern(AsyncAPIClient):
         if base_url is None:
             base_url = f"https://vern.so/api/v1"
 
+        custom_headers_env = os.environ.get("VERN_CUSTOM_HEADERS")
+        if custom_headers_env is not None:
+            parsed: dict[str, str] = {}
+            for line in custom_headers_env.split("\n"):
+                colon = line.find(":")
+                if colon >= 0:
+                    parsed[line[:colon].strip()] = line[colon + 1 :].strip()
+            default_headers = {**parsed, **(default_headers if is_mapping_t(default_headers) else {})}
+
         super().__init__(
             version=__version__,
             base_url=base_url,
@@ -260,9 +288,19 @@ class AsyncVern(AsyncAPIClient):
             _strict_response_validation=_strict_response_validation,
         )
 
-        self.runs = runs.AsyncRunsResource(self)
-        self.with_raw_response = AsyncVernWithRawResponse(self)
-        self.with_streaming_response = AsyncVernWithStreamedResponse(self)
+    @cached_property
+    def runs(self) -> AsyncRunsResource:
+        from .resources.runs import AsyncRunsResource
+
+        return AsyncRunsResource(self)
+
+    @cached_property
+    def with_raw_response(self) -> AsyncVernWithRawResponse:
+        return AsyncVernWithRawResponse(self)
+
+    @cached_property
+    def with_streaming_response(self) -> AsyncVernWithStreamedResponse:
+        return AsyncVernWithStreamedResponse(self)
 
     @property
     @override
@@ -289,9 +327,9 @@ class AsyncVern(AsyncAPIClient):
         *,
         api_key: str | None = None,
         base_url: str | httpx.URL | None = None,
-        timeout: float | Timeout | None | NotGiven = NOT_GIVEN,
+        timeout: float | Timeout | None | NotGiven = not_given,
         http_client: httpx.AsyncClient | None = None,
-        max_retries: int | NotGiven = NOT_GIVEN,
+        max_retries: int | NotGiven = not_given,
         default_headers: Mapping[str, str] | None = None,
         set_default_headers: Mapping[str, str] | None = None,
         default_query: Mapping[str, object] | None = None,
@@ -370,23 +408,55 @@ class AsyncVern(AsyncAPIClient):
 
 
 class VernWithRawResponse:
+    _client: Vern
+
     def __init__(self, client: Vern) -> None:
-        self.runs = runs.RunsResourceWithRawResponse(client.runs)
+        self._client = client
+
+    @cached_property
+    def runs(self) -> runs.RunsResourceWithRawResponse:
+        from .resources.runs import RunsResourceWithRawResponse
+
+        return RunsResourceWithRawResponse(self._client.runs)
 
 
 class AsyncVernWithRawResponse:
+    _client: AsyncVern
+
     def __init__(self, client: AsyncVern) -> None:
-        self.runs = runs.AsyncRunsResourceWithRawResponse(client.runs)
+        self._client = client
+
+    @cached_property
+    def runs(self) -> runs.AsyncRunsResourceWithRawResponse:
+        from .resources.runs import AsyncRunsResourceWithRawResponse
+
+        return AsyncRunsResourceWithRawResponse(self._client.runs)
 
 
 class VernWithStreamedResponse:
+    _client: Vern
+
     def __init__(self, client: Vern) -> None:
-        self.runs = runs.RunsResourceWithStreamingResponse(client.runs)
+        self._client = client
+
+    @cached_property
+    def runs(self) -> runs.RunsResourceWithStreamingResponse:
+        from .resources.runs import RunsResourceWithStreamingResponse
+
+        return RunsResourceWithStreamingResponse(self._client.runs)
 
 
 class AsyncVernWithStreamedResponse:
+    _client: AsyncVern
+
     def __init__(self, client: AsyncVern) -> None:
-        self.runs = runs.AsyncRunsResourceWithStreamingResponse(client.runs)
+        self._client = client
+
+    @cached_property
+    def runs(self) -> runs.AsyncRunsResourceWithStreamingResponse:
+        from .resources.runs import AsyncRunsResourceWithStreamingResponse
+
+        return AsyncRunsResourceWithStreamingResponse(self._client.runs)
 
 
 Client = Vern
